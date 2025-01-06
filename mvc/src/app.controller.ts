@@ -1,11 +1,15 @@
-
-import { Get, Controller, Render } from '@nestjs/common';
+// src/app.controller.ts
+import { Controller, Get, Render } from '@nestjs/common';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
+  constructor(private readonly appService: AppService) {}
+
   @Get()
-  @Render('index')
-  root() {
-    return { message: 'Hello world!' };
+  @Render('index')  
+  async root() {
+    const users = await this.appService.getUsers();
+    return { message: 'User List', users };  
   }
 }

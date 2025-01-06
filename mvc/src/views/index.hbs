@@ -1,0 +1,16 @@
+<!-- views/index.hbs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>User List</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <ul>
+      {{#each users}}
+        <li>{{this.name}} - {{this.email}}</li>
+      {{/each}}
+    </ul>
+</body>
+</html>
