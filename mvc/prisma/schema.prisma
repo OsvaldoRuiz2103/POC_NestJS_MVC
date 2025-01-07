@@ -14,9 +14,45 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String         
+  name           String
+  bio            String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  posts          Post[]
+  comments       Comment[]
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  organizationId Int
+}
+
+model Organization {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  members     User[]
+}
+
+model Post {
+  id          Int        @id @default(autoincrement())
+  content     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  author      User       @relation(fields: [authorId], references: [id])
+  authorId    Int
+  comments    Comment[]
+}
+
+model Comment {
+  id         Int        @id @default(autoincrement())
+  content    String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  post       Post       @relation(fields: [postId], references: [id])
+  postId     Int
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
 }
