@@ -1,10 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 
-// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create three dummy users with proper data
   const user1 = await prisma.user.upsert({
     where: { email: 'user1@example.com' },
     update: {},
@@ -32,7 +30,15 @@ async function main() {
     },
   });
 
-  console.log('Seeded users:', { user1, user2, user3 });
+    const user4 = await prisma.user.upsert({
+    where: { email: 'user4@example.com' },
+    update: {},
+    create: {
+      email: 'user4@example.com',
+      name: 'User For',
+    },
+  });
+
 }
 
 // Execute the main function
@@ -42,6 +48,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    // Close Prisma Client at the end
     await prisma.$disconnect();
   });

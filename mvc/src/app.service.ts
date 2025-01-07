@@ -10,3 +10,5 @@ export class AppService {
     return await this.prisma.user.findMany();
   }
 }
+
+

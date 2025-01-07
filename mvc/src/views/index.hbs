@@ -1,4 +1,4 @@
-<!-- views/index.hbs -->
+<!-- src/views/index.hbs -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,10 +7,32 @@
 </head>
 <body>
     <h1>{{ message }}</h1>
-    <ul>
-      {{#each users}}
-        <li>{{this.name}} - {{this.email}}</li>
-      {{/each}}
+    <button onclick="fetchUsers()">Refresh Users</button>
+    
+    <ul id="user-list">
+        {{#each users}}
+            <li>{{this.name}} - {{this.email}}</li>
+        {{/each}}
     </ul>
+
+    <script>
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/home/data'); 
+                const data = await response.json(); 
+
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = '';
+
+                data.users.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `${user.name} - ${user.email}`;
+                    userList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+    </script>
 </body>
 </html>
