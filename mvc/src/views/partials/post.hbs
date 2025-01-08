@@ -1,0 +1,10 @@
+<!-- src/views/partials/post.hbs -->
+<div class="post">
+    <h3>{{author.name}}</h3>
+    <p>{{content}}</p>
+    <ul>
+        {{#each comments}}
+            {{> comment this}}
+        {{/each}}
+    </ul>
+</div>

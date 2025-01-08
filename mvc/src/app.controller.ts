@@ -2,20 +2,14 @@
 import { Controller, Get, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller('home')
+@Controller('feed')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @Render('index')
+  @Render('feed')
   async root() {
-    const users = await this.appService.getUsers();
-    return { message: 'User List', users };
-  }
-
-  @Get('data')
-  async getData() {
-    const users = await this.appService.getUsers();
-    return { users }; 
+    const posts = await this.appService.getPosts();
+    return { message: 'Feed', posts };
   }
 }

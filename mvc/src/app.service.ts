@@ -9,6 +9,12 @@ export class AppService {
   async getUsers() {
     return await this.prisma.user.findMany();
   }
+
+  async getPosts() {
+    return await this.prisma.post.findMany(
+      { include: { author: true, comments: { include: { author: true } } } },
+    );
+  }
 }
 
 

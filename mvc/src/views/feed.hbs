@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> Feed</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.min.js"></script>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <button onclick="fetchPosts()">Refresh Feed</button>
+
+    <div class="new-post">
+        <h3>Create a New Post</h3>
+        <textarea id="new-post-content" placeholder="What's on your mind?"></textarea>
+        <button onclick="submitPost()">Post</button>
+    </div>
+    
+    <div id="post-feed">
+        {{#each posts}}
+            {{> post this}}
+        {{/each}}
+    </div>
+
+   <script>
+        async function fetchPosts() {
+            try {
+                const response = await fetch('/posts'); 
+                const data = await response.json();
+                console.log('Fetched Data:', data);
+
+                const [postPartial, commentPartial] = await Promise.all([
+                    fetch('/partials/post.hbs').then(res => res.text()),
+                    fetch('/partials/comment.hbs').then(res => res.text())
+                ]);
+
+                Handlebars.unregisterPartial('post');
+                Handlebars.unregisterPartial('comment');
+                Handlebars.registerPartial('post', postPartial);
+                Handlebars.registerPartial('comment', commentPartial);
+
+                const template = Handlebars.compile(`
+                    {{#each posts}}
+                        {{> post this}}
+                    {{/each}}
+                `);
+
+                data.push({
+                    id: 999, 
+                    content: 'Test Post', 
+                    author: { name: 'Debug User' }
+                });
+
+                console.log('Rendered Template:', template({ posts: data }));
+                const postFeed = document.getElementById('post-feed');
+                postFeed.innerHTML = template({ posts: data });
+
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        }
+
+        async function submitPost() {
+            const textarea = document.getElementById('new-post-content');
+            const postContent = textarea.value;
+
+            try {
+                const response = await fetch('/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: postContent, authorId:1})
+                });
+
+                if (response.ok) {
+                    textarea.value = '';
+                    await fetchPosts();
+                } else {
+                    alert('Failed to create the post.');
+                }
+            } catch (error) {
+                console.error('Error submitting post:', error);
+            }
+        }
+    </script>
+</body>
+</html>
