@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Param,  Res, Render, Req } from '@nestjs/common';
+//posts/posts.controller.ts
+
+import { Controller, Get, Post, Body, Param,  Res, Render, Req, Patch, Delete } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 @Controller('posts')
 export class PostsController {
@@ -17,21 +19,22 @@ export class PostsController {
       return res.redirect('/posts');  
   }
 
-  //This endpoint handles PATCH and DELETE requests because the HTML form's method attribute is limited to GET or POST 
-  @Post(':id')
-  async updateOrDeletePost(
+  @Patch(':id')
+  async updatePost(
       @Param('id') id: string,
-      @Body() bodyRequest: UpdatePostDto,
+      @Body() updatePostDto: UpdatePostDto,
       @Res() res: Response
   ) {
-      const { _method, ...body } = bodyRequest;
+      await this.postsService.update(+id, updatePostDto);
+      return res.redirect('/posts');
+  }
 
-      if (_method === 'PATCH') {
-          await this.postsService.update(+id, body);
-      } else if (_method === 'DELETE') {
-          await this.postsService.remove(+id);
-      }
-
+  @Delete(':id')
+  async removePost(
+      @Param('id') id: string,
+      @Res() res: Response
+  ) {
+      await this.postsService.remove(+id);
       return res.redirect('/posts');
   }
 
